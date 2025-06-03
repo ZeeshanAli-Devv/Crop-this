@@ -10,28 +10,27 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Animate CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <!-- Copper CDN -->
-    <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css">
-    <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
     <!-- Sweet Alert CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Fav Icon -->
     <link rel="icon" href="Assets/fav-icon/fav-icon.png">
+    <!-- Animation CDN AOS -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 </head>
-<body>
+<body class="bg-gradient-to-r from-indigo-50 to-white overflow-x-hidden">
     <div class="h-screen flex lg:flex-row flex-col justify-between lg:p-12 p-2 pr-4">
          <!-- Picture Field -->
-        <div class="h-full lg:w-[55%] flex justify-center items-center">
+        <div class="h-full lg:w-[55%] flex justify-center items-center" data-aos="fade-right" data-aos-duration="1000">
             <div>
-                <img src="Assets/signip.jpg" alt="" class="rounded-xl">
+                <img src="Assets/signup.png" alt="" class="rounded-xl">
             </div>
         </div>
         
         <!-- Form Field -->
-        <div class="h-full lg:w-[40%] flex flex-col justify-center items-start gap-">
+        <div class="h-full lg:w-[40%] flex flex-col justify-center items-start" data-aos="fade-left" data-aos-duration="1500">
             <!-- Logo -->
             <div>
-                <img src="Assets/logo.webp" alt="brand-image" class="w-[80px]">
+                <img src="Assets/logo.png" alt="brand-image" class="w-[80px]">
             </div>
             
             <!-- Titlt -->
@@ -40,63 +39,97 @@
                 <p class="text-sm">Join us to access the latest products and product catalogs</p>
             </div>
 
-            <form action="" class="ml-2 mt-4 lg:w-[80%] w-full space-y-4">
+            <form action="" class="ml-2 mt-4 lg:w-[80%] w-full space-y-4" name="signupForm" onsubmit="createUser(event)">
                 <!-- Name Field -->
-                <div class="bg-gray-50 shadow-lg w-full p-3 rounded-full">
+                <div class="bg-gray-50 shadow-lg w-full p-3 rounded-full animate__animated" id="name-box">
                     <div class="flex items-center gap-4 px-2">   
-                        <i class="fa-solid fa-user"></i>
+                        <i id="user-icon" class="fa-solid fa-user"></i>
                         <div class="border-2 h-[16px] border-gray-300 border-r"></div>
-                        <input type="text" name="name" placeholder="Name" class="w-full outline-none placeholder:text-sm">
+                        <input 
+                            oninput="removeValidation(this, 'user-icon')"
+                            type="text" 
+                            name="name" 
+                            placeholder="Name" 
+                            class="w-full outline-none placeholder:text-sm"
+                        >
                     </div>
                 </div>
 
                 <!-- Email Field -->
-                <div class="bg-gray-50 shadow-lg w-full p-3 rounded-full">
+                <div class="bg-gray-50 shadow-lg w-full p-3 rounded-full animate__animated" id="email-box">
                     <div class="flex items-center gap-4 px-2">   
-                        <i class="fa-solid fa-envelope"></i>
+                        <i id="email-icon" class="fa-solid fa-envelope"></i>
                         <div class="border-2 h-[16px] border-gray-300 border-r"></div>
-                        <input type="email" name="email" placeholder="Email" class="w-full outline-none placeholder:text-sm">
+                        <input 
+                            oninput="removeValidation(this, 'email-icon')"
+                            type="email" 
+                            name="email" 
+                            placeholder="Email" 
+                            class="w-full outline-none placeholder:text-sm"
+                        >
                     </div>
                 </div>
 
                 <!-- Password Field -->
-                <div class="bg-gray-50 shadow-lg w-full p-3 rounded-full">
+                <div class="bg-gray-50 shadow-lg w-full p-3 rounded-full animate__animated" id="password-box">
                     <div class="flex items-center gap-4 px-2">   
-                        <i class="fa-solid fa-lock"></i>
+                        <i id="password-icon" class="fa-solid fa-lock"></i>
                         <div class="border-2 h-[16px] border-gray-300 border-r"></div>
                         <div class="relative w-full">
-                            <input id="password" type="password" name="password" placeholder="Password" class="w-full outline-none placeholder:text-sm">
+                            <input
+                                oninput="removeValidation(this, 'password-icon','password-error')" 
+                                id="password" 
+                                type="password" 
+                                name="password" 
+                                placeholder="Password" 
+                                class="w-full outline-none placeholder:text-sm"
+                            >
                             <i id="password-eye-icon" onclick="togglepassword('password','password-eye-icon')" class="fa-solid fa-eye absolute top-1.5 right-2 text-gray-400 hover:text-black cursor-pointer"></i>
                         </div>
                     </div>
                 </div>
+                <label id="password-error" for="" class="text-xs text-red-600 font-semibold hidden"></label>
 
                 <!-- Re-Enter Password -->
-                <div class="bg-gray-50 shadow-lg w-full p-3 rounded-full">
+                <div class="bg-gray-50 shadow-lg w-full p-3 rounded-full animate__animated" id="confirm-password-box">
                     <div class="flex items-center gap-4 px-2">   
-                        <i class="fa-solid fa-lock"></i>
+                        <i id="confirm-password-icon" class="fa-solid fa-lock"></i>
                         <div class="border-2 h-[16px] border-gray-300 border-r"></div>
                         <div class="relative w-full">
-                            <input id="confirm-password" type="password" name="confirmPassword" placeholder="Re-enter Password" class="w-full outline-none placeholder:text-sm">
+                            <input
+                                oninput="removeValidation(this, 'confirm-password-icon','confirm-password-error')"
+                                id="confirm-password" 
+                                type="password" 
+                                name="confirmPassword" 
+                                placeholder="Re-enter Password" 
+                                class="w-full outline-none placeholder:text-sm"
+                            >
                             <i id="confirm-password-eye-icon" onclick="togglepassword('confirm-password', 'confirm-password-eye-icon')" class="fa-solid fa-eye absolute top-1.5 right-2 text-gray-400 hover:text-black cursor-pointer"></i>
                         </div>
                     </div>
                 </div>
+                <label id="confirm-password-error" for="" class="text-xs text-red-600 font-semibold hidden"></label>
 
-                <button class="bg-indigo-400 hover:bg-indigo-500 active:scale-110 transition ease-in duration-300 cursor-pointer text-white w-full p-3 rounded-full">Sign up</button>
+                <button class="bg-indigo-400 hover:bg-indigo-500 active:scale-110 transition ease-in duration-300 cursor-pointer text-white w-full p-3 rounded-full mt-1">Sign up</button>
             </form>
 
             <!-- Sign in field -->
             <div class="flex items-center gap-2 ml-4 my-4">
                 <p class="text-sm">Already have an account?</p>
-                <a href="#" class="hover:border-b font-medium">Sign in</a>
+                <a href="login.html" class="hover:border-b font-medium text-blue-400">Sign in</a>
             </div>
-        </div>
-
-       
+        </div>       
 
     </div>
-
+    
     <script src="js/signup.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-in-out'
+        });
+    </script>
 </body>
 </html>
