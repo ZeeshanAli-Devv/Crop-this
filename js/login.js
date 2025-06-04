@@ -1,5 +1,5 @@
 window.onload = ()=>{
-    const user = localStorage.getItem("isLogin");
+    const user = localStorage.getItem("session");
     if(user){
        location.replace("index.html"); 
     }
@@ -66,7 +66,7 @@ const loginUser = (event)=>{
     const data = JSON.parse(user);
     if(data){
         if(data.password == password.value.trim()) {
-            localStorage.setItem("isLogin", true)
+            localStorage.setItem("session", user)
             location.replace("index.html");
             swal.fire({
                 icon : "success",

@@ -3,25 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile-Page</title>
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Animate CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <!-- Copper CDN -->
+    <title>ImageCropper Pro | Dashboard</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px rgba(0,0,0,0.08)',
+                        'soft-lg': '0 10px 30px rgba(0,0,0,0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- CropperJS -->
     <link rel="stylesheet" href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css">
     <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
-    <!-- Sweet Alert CDN -->
+    <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Fav Icon -->
-    <link rel="icon" href="Assets/fav-icon/fav-icon.png">
 </head>
-<body>
-    
-    
+<body class="bg-gray-50 font-sans antialiased">
 
+    <!-- Main App Container -->
+    <div class="min-h-screen flex flex-col">
+
+        <!-- Header -->
+        <header class="bg-white shadow-sm py-3 px-6 sticky top-0 z-10">
+            <div class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-primary-600 text-white p-2 rounded-lg">
+                        <i class="fas fa-crop-alt text-lg"></i>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-800">
+                        ImageCropper <span class="text-primary-600">Pro</span>
+                    </h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="group relative">
+                        <div class="w-10 h-10 rounded-full overflow-hidden cursor-pointer border-2 border-white shadow-md transition-all duration-300 group-hover:scale-110">
+                            <img id="user-pic" src="Assets/user.jpg" class="w-full h-full object-cover">
+                            <input id="user-pic-input" onchange="changeuserpic()" type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer">
+                        </div>
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                            Change profile picture
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-0 border-t-4 border-gray-800 border-solid"></div>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="text-sm bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-4 py-1.5 rounded-lg font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+                        <i class="fas fa-sign-out-alt mr-1.5"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- User Info Bar -->
+        <div class="bg-gradient-to-r from-primary-50 to-primary-100 py-2.5 px-6 border-b border-primary-200">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <span class="font-medium text-gray-800 text-sm" id="session-name"></span>
+                    <span class="text-xs text-gray-600 px-2 py-1 bg-white rounded-md shadow-inner" id="session-email"></span>
+                </div>
+                <div class="text-xs text-gray-600 font-medium flex items-center">
+                    <div class="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                    <span>Last active: <span id="last-active" class="font-semibold">Just now</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-grow p-6">
+            <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden p-6 border border-gray-100">
+
+                <!-- Image Preview Section -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold text-gray-800">Image Editor</h2>
+                        <div class="text-xs bg-primary-50 text-primary-700 px-3 py-1 rounded-full font-medium">
+                            <i class="fas fa-info-circle mr-1"></i> Max file size: 5MB
+                        </div>
+                    </div>
+                    <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50 hover:bg-primary-50 hover:border-primary-400 transition-colors duration-200">
+                        <img id="upload-pic" src="Assets/1 (2).jpg" class="max-w-full max-h-[65vh] mx-auto rounded-lg shadow-sm">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <label class="flex items-center bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-lg cursor-pointer font-medium shadow-md hover:-translate-y-1 active:translate-y-0 transition-all duration-200">
+                        <i class="fas fa-upload mr-3"></i> Choose Image
+                        <input id="picture" type="file" class="hidden" onchange="changepicture()">
+                    </label>
+                    
+                    <button onclick="loadCropper()" class="flex items-center bg-gradient-to-br from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:-translate-y-1 active:translate-y-0 transition-all duration-200">
+                        <i class="fas fa-crop-alt mr-3"></i> Crop Image
+                    </button>
+                    
+                    <button id="download-btn" onclick="downloadData()" class="hidden flex items-center bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg font-medium shadow-md hover:-translate-y-1 active:translate-y-0 transition-all duration-200">
+                        <i class="fas fa-download mr-3"></i> Download
+                    </button>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-primary-100 rounded-lg mr-3">
+                                <i class="fas fa-image text-primary-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Images Processed</p>
+                                <p class="text-lg font-semibold text-gray-800" id="images-processed">1,248</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-green-100 rounded-lg mr-3">
+                                <i class="fas fa-cloud-upload-alt text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Last Upload</p>
+                                <p class="text-lg font-semibold text-gray-800" id="last-upload-time">Today, 10:24 AM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-purple-100 rounded-lg mr-3">
+                                <i class="fas fa-save text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-medium">Storage Used</p>
+                                <p class="text-lg font-semibold text-gray-800" id="storage-used">124 MB / 2 GB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white py-4 border-t">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between px-6">
+                <div class="text-sm text-gray-500 mb-2 md:mb-0">
+                    © 2025 ImageCropper Pro. All rights reserved.
+                </div>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-sm text-gray-500 hover:text-primary-600 transition-colors">Terms</a>
+                    <a href="#" class="text-sm text-gray-500 hover:text-primary-600 transition-colors">Privacy</a>
+                    <a href="#" class="text-sm text-gray-500 hover:text-primary-600 transition-colors">Help</a>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Your Original JS (No Changes) -->
     <script src="js/index.js"></script>
+
+    <!-- New JS for Last Active (Add this after your original JS) -->
+    <script>
+        // Function to format time
+        function formatTime(date) {
+            const options = { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            };
+            return date.toLocaleTimeString([], options);
+        }
+        
+        // Function to update stats
+        function updateStats() {
+            const now = new Date();
+            
+            // Update last active time
+            document.getElementById('last-active').textContent = formatTime(now);
+            
+            // Update quick stats with random/dynamic data
+            document.getElementById('images-processed').textContent = 
+                Math.floor(Math.random() * 2000 + 1000).toLocaleString();
+            
+            document.getElementById('last-upload-time').textContent = 
+                'Today, ' + formatTime(now);
+            
+            const usedMB = Math.floor(Math.random() * 500 + 50);
+            document.getElementById('storage-used').textContent = 
+                `${usedMB} MB / 2 GB`;
+        }
+        
+        // Update immediately on load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            document.getElementById('session-name').textContent = 'John Doe';
+            document.getElementById('session-email').textContent = 'john.doe@example.com';
+            
+            // Update every minute
+            setInterval(updateStats, 60000);
+        });
+    </script>
 </body>
 </html>
